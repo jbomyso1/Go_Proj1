@@ -1,23 +1,32 @@
 package main
 
-import (
-    "bytes"
-    "flag"
-    "fmt"
-    "io/ioutil"
-    "math/rand"
-    "runtime"
-    "strings"
-    "sync"
-    "sync/atomic"
-    "time"
-)
-
-const {
-    ADD_BUFFER_SIZE = 32
-    ASK_BUFFER_SIZE = 8
+type ChannelMap struct {
+    askChan chan int
+    addChan chan int
+    reduceChan chan int
+    store map[string]int
 }
 
-func main() {
+func NewChannelMap() *ChannelMap{
+    return &ChannelMap()
+}
+
+func (cmap * ChannelMap) Listen() {
 
 }
+func (cmap * ChannelMap) Stop() {
+
+}
+
+func (cmap * ChannelMap) Reduce(functor ReduceFunc, accum_str string, accum_int int) (string, int) {
+
+}
+
+func (cmap * ChannelMap) AddWord(word string) {
+
+}
+
+func (cmap * ChannelMap) GetCount(word string) int {
+
+}
+
