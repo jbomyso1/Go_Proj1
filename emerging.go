@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"bytes"
 	"flag"
@@ -30,11 +29,6 @@ var (
 
 	totalWords   int64
 	totalQueries int64
-)
-
-const (
-	ADD_BUFFER_SIZE = 32
-	ASK_BUFFER_SIZE = 8
 )
 
 type EmergingMap interface {
@@ -153,9 +147,6 @@ func reducer(functor ReduceFunc, emap EmergingMap, accum_str string, accum_int i
         }
     }
 }
-
-
-
 
 func asker(word_list []string, emap EmergingMap, kill chan int) {
 	L := len(word_list)
