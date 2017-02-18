@@ -44,8 +44,6 @@ func NewLockingMap() *ChannelMap {
 func (self * ChannelMap) Listen() {
 	for {
 		select {
-			case <-self.killChan:
-				break
 			case message := <-self.addChan:
 				if val, ok := self.store[message]; ok {
 					self.store[message] = val + 1
@@ -60,13 +58,15 @@ func (self * ChannelMap) Listen() {
 				}
 
 			case req := <-self.reduceChan:
-				println("reicieved a reduction")
+				println("received a reduction")
 				ret := ReductionAnswer{req.accum_str, req.accum_int}
 
 				for k, v := range self.store {
 					ret.word, ret.count = req.functor(ret.word, ret.count, k, v)
 				}
 				self.returnChan <- ret
+			case <- self.killChan:
+				return
 		}
 	}
 
