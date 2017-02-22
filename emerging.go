@@ -31,6 +31,11 @@ var (
 	totalQueries int64
 )
 
+const (
+        ADD_BUFFER_SIZE = 32
+        ASK_BUFFER_SIZE = 8
+    )
+
 type EmergingMap interface {
 	Listen()
 	Stop()
@@ -60,6 +65,7 @@ func main() {
 
 	go emap.Listen()
 
+
 	fmt.Println("Reading query file")
 	ask_list := readFile(*arg_askfile)
 
@@ -86,7 +92,7 @@ func main() {
 
         fmt.Println("Starting Reducer")
         reduce_kill := make(chan int)
-        reducer(max_word, emap, "INVALID", 0, reduce_kill)
+        go reducer(max_word, emap, "INVALID", 0, reduce_kill)
 
 
 	fmt.Println("\nRunning\n")

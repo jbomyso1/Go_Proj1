@@ -16,7 +16,7 @@ type ChannelMap struct {
     addChan chan string
     countChan chan int
 
-	killChan chan int
+	killChan chan bool
     returnChan chan ReductionAnswer
 
     reduceChan chan Reduction
@@ -29,7 +29,7 @@ func NewChannelMap() *ChannelMap {
     m.addChan = make(chan string)
     m.askChan = make(chan string)
     m.countChan = make(chan int)
-    m.killChan = make(chan int)
+    m.killChan = make(chan bool)
     m.reduceChan = make(chan Reduction)
     m.returnChan = make(chan ReductionAnswer)
     return m
@@ -42,8 +42,10 @@ func NewLockingMap() *ChannelMap {
 }
 
 func (self * ChannelMap) Listen() {
-	for {
+    for {
 		select {
+            case <- self.killChan:
+                 break
 			case message := <-self.addChan:
 				if val, ok := self.store[message]; ok {
 					self.store[message] = val + 1
@@ -65,14 +67,12 @@ func (self * ChannelMap) Listen() {
 					ret.word, ret.count = req.functor(ret.word, ret.count, k, v)
 				}
 				self.returnChan <- ret
-			case <- self.killChan:
-				return
 		}
 	}
 
 }
 func (self * ChannelMap) Stop() {
-	self.killChan <- 1
+	self.killChan <- true
 }
 
 func (self * ChannelMap) Reduce(functor ReduceFunc, accum_str string, accum_int int) (string, int) {
